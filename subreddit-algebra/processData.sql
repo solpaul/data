@@ -1,5 +1,52 @@
 ##### Part 0: Formatted and processed data in BigQuery
 
+## Creating list of number of comments and authors for sports property related subreddits
+SELECT subreddit, authors, DENSE_RANK() OVER (ORDER BY authors DESC) AS rank_authors, comments, DENSE_RANK() OVER (ORDER BY comments DESC) AS rank_comments
+FROM (SELECT subreddit, SUM(1) as authors, SUM(cnt) as comments
+     FROM (SELECT subreddit, author, COUNT(1) as cnt
+         FROM [fh-bigquery:reddit_comments.all_starting_201501]
+         WHERE author NOT IN (SELECT author FROM [fh-bigquery:reddit_comments.bots_201505])
+         AND subreddit IN('AFL', 'CFL', 'nfl', 'soccer', 'MLS', 'rugbyunion', 
+         'nrl', 'mlb', 'nhl', 'nba', 'ProGolf', 'tennis', 'Cricket', 'olympics', 'GAA',
+         'CFB', 'CollegeBasketball', 'Boxing', 'formula1', 'MMA', 'ufc', 'NASCAR',
+         'LaLiga', 'PremierLeague')
+         GROUP BY subreddit, author 
+         HAVING cnt > 0)
+     GROUP BY subreddit) t
+ORDER BY authors DESC;
+
+## Creating list of number of comments and authors for NFL teams
+SELECT subreddit, authors, DENSE_RANK() OVER (ORDER BY authors DESC) AS rank_authors, comments, DENSE_RANK() OVER (ORDER BY comments DESC) AS rank_comments
+FROM (SELECT subreddit, SUM(1) as authors, SUM(cnt) as comments
+     FROM (SELECT subreddit, author, COUNT(1) as cnt
+         FROM [fh-bigquery:reddit_comments.all_starting_201501]
+         WHERE author NOT IN (SELECT author FROM [fh-bigquery:reddit_comments.bots_201505])
+         AND subreddit IN('buffalobills', 'ravens', 'Colts', 'DenverBroncos', 'miamidolphins', 
+                          'bengals', 'Jaguars', 'KansasCityChiefs', 'Patriots', 'Browns', 'Texans', 
+                          'oaklandraiders', 'nyjets', 'steelers', 'Tennesseetitans', 'Chargers', 
+                          'cowboys', 'CHIBears', 'falcons', 'AZCardinals', 'NYGiants', 'detroitlions', 
+                          'panthers', '49ers', 'eagles', 'GreenBayPackers', 'Saints', 'Seahawks', 
+                          'Redskins', 'minnesotavikings', 'buccaneers', 'StLouisRams', 'LosAngelesRams')
+         GROUP BY subreddit, author 
+         HAVING cnt > 0)
+     GROUP BY subreddit) t
+ORDER BY authors DESC;
+
+## Creating list of number of comments and authors for Premier League teams
+SELECT subreddit, authors, DENSE_RANK() OVER (ORDER BY authors DESC) AS rank_authors, comments, DENSE_RANK() OVER (ORDER BY comments DESC) AS rank_comments
+FROM (SELECT subreddit, SUM(1) as authors, SUM(cnt) as comments
+     FROM (SELECT subreddit, author, COUNT(1) as cnt
+         FROM [fh-bigquery:reddit_comments.all_starting_201501]
+         WHERE author NOT IN (SELECT author FROM [fh-bigquery:reddit_comments.bots_201505])
+         AND subreddit IN('Gunners', 'AFCBournemouth', 'chelseafc', 'crystalpalace', 'Everton', 'HullCity', 
+         'lcfc', 'LiverpoolFC', 'MCFC', 'reddevils', 'SaintsFC', 'StokeCityFC', 'safc', 'coys', 'Watford_FC', 
+         'WBAfootball', 'Hammers', 'swanseacity', 'Burnley', 'Middlesbrough')
+         GROUP BY subreddit, author 
+         HAVING cnt > 0)
+     GROUP BY subreddit) t
+ORDER BY authors DESC;
+
+
 ## Creating list of number of users in each subreddit: 
 ## Thanks to Reddit users /u/Stuck_In_the_Matrix for pulling the data originally and /u/fhoffa for hosting the data on BigQery
 SELECT subreddit, authors, DENSE_RANK() OVER (ORDER BY authors DESC) AS rank_authors

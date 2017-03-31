@@ -68,7 +68,7 @@ return(subsimilarity)
 
 ## function to calculate similarity matrix for set of subreddits
 subredditmatrix <- function(cursubs) {
-	cursubs = tolower(cursubs)
+	cursubs = sort(tolower(cursubs))
 	similaritymatrix = matrix(0, ncol=length(cursubs), nrow=length(cursubs))
 	for(i in 1:length(cursubs)) {
 		for(j in 1:length(cursubs)) {

@@ -139,6 +139,3 @@ createplot(nflmatrix)
 createplot(nbamatrix)
 createplot(mlbmatrix)
 createplot(plmatrix)
-
-nflmatrix <- melt(nflmatrix)
-

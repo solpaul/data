@@ -8,6 +8,11 @@
 # vectors. 
 # By @martintrevor_ for FiveThirtyEight
 #
+# Added code to create matrix of similarities
+# across a set of subreddits, plot as a
+# heatmap, and export to the plot to .png.
+# Applied this to sports team subreddits.
+# By github.com/solpaul
 #######################################
 
 library(reshape2)
@@ -139,3 +144,4 @@ createplot(nflmatrix)
 createplot(nbamatrix)
 createplot(mlbmatrix)
 createplot(plmatrix)
+

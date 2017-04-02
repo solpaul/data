@@ -2,9 +2,7 @@
 ## Thanks to Reddit users /u/Stuck_In_the_Matrix for pulling the data originally and /u/fhoffa for hosting the data on BigQery
 
 ## Creating list of number of comments, authors and average scores for sports property related subreddits
-SELECT subreddit, authors, DENSE_RANK() OVER (ORDER BY authors DESC) AS rank_authors, 
-      comments, DENSE_RANK() OVER (ORDER BY comments DESC) AS rank_comments,
-      average_score, DENSE_RANK() OVER (ORDER BY average_score DESC) AS rank_average_score
+SELECT subreddit, authors, comments, average_score, comments / authors AS comments_per_author
 FROM (SELECT subreddit, SUM(1) AS authors, SUM(cnt) AS comments, SUM(sum_score) / SUM(cnt) AS average_score
      FROM (SELECT subreddit, author, COUNT(1) as cnt, SUM(score) AS sum_score
          FROM [fh-bigquery:reddit_comments.all_starting_201501]
@@ -18,9 +16,7 @@ FROM (SELECT subreddit, SUM(1) AS authors, SUM(cnt) AS comments, SUM(sum_score) 
 ORDER BY authors DESC;
 
 ## Creating list of number of comments, authors and average scores for NFL teams
-SELECT subreddit, authors, DENSE_RANK() OVER (ORDER BY authors DESC) AS rank_authors, 
-      comments, DENSE_RANK() OVER (ORDER BY comments DESC) AS rank_comments,
-      average_score, DENSE_RANK() OVER (ORDER BY average_score DESC) AS rank_average_score
+SELECT subreddit, authors, comments, average_score, comments / authors AS comments_per_author
 FROM (SELECT subreddit, SUM(1) AS authors, SUM(cnt) AS comments, SUM(sum_score) / SUM(cnt) AS average_score
      FROM (SELECT subreddit, author, COUNT(1) as cnt, SUM(score) AS sum_score
          FROM [fh-bigquery:reddit_comments.all_starting_201501]
@@ -37,9 +33,7 @@ ORDER BY authors DESC;
 
 
 ## Creating list of number of comments, authors and average scores for Premier League teams
-SELECT subreddit, authors, DENSE_RANK() OVER (ORDER BY authors DESC) AS rank_authors, 
-      comments, DENSE_RANK() OVER (ORDER BY comments DESC) AS rank_comments,
-      average_score, DENSE_RANK() OVER (ORDER BY average_score DESC) AS rank_average_score
+SELECT subreddit, authors, comments, average_score, comments / authors AS comments_per_author
 FROM (SELECT subreddit, SUM(1) AS authors, SUM(cnt) AS comments, SUM(sum_score) / SUM(cnt) AS average_score
      FROM (SELECT subreddit, author, COUNT(1) as cnt, SUM(score) AS sum_score
          FROM [fh-bigquery:reddit_comments.all_starting_201501]
@@ -52,9 +46,7 @@ FROM (SELECT subreddit, SUM(1) AS authors, SUM(cnt) AS comments, SUM(sum_score) 
 ORDER BY authors DESC;
 
 ## Creating list of number of comments, authors and average scores for MLB teams
-SELECT subreddit, authors, DENSE_RANK() OVER (ORDER BY authors DESC) AS rank_authors, 
-      comments, DENSE_RANK() OVER (ORDER BY comments DESC) AS rank_comments,
-      average_score, DENSE_RANK() OVER (ORDER BY average_score DESC) AS rank_average_score
+SELECT subreddit, authors, comments, average_score, comments / authors AS comments_per_author
 FROM (SELECT subreddit, SUM(1) AS authors, SUM(cnt) AS comments, SUM(sum_score) / SUM(cnt) AS average_score
      FROM (SELECT subreddit, author, COUNT(1) as cnt, SUM(score) AS sum_score
          FROM [fh-bigquery:reddit_comments.all_starting_201501]
@@ -70,9 +62,7 @@ ORDER BY authors DESC;
 
 
 ## Creating list of number of comments, authors, and average scores for NBA Team subreddits
-SELECT subreddit, authors, DENSE_RANK() OVER (ORDER BY authors DESC) AS rank_authors, 
-      comments, DENSE_RANK() OVER (ORDER BY comments DESC) AS rank_comments,
-      average_score, DENSE_RANK() OVER (ORDER BY average_score DESC) AS rank_average_score
+SELECT subreddit, authors, comments, average_score, comments / authors AS comments_per_author
 FROM (SELECT subreddit, SUM(1) AS authors, SUM(cnt) AS comments, SUM(sum_score) / SUM(cnt) AS average_score
      FROM (SELECT subreddit, author, COUNT(1) as cnt, SUM(score) AS sum_score
          FROM [fh-bigquery:reddit_comments.all_starting_201501]

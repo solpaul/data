@@ -13,6 +13,7 @@
 library(reshape2)
 library(lsa)
 library(ggtern)
+library(ggplot2)
 
 ##### Part 1: Load in the data
 
@@ -85,7 +86,7 @@ premierleagueclubs <- c("Gunners", "AFCBournemouth", "chelseafc", "crystalpalace
 		       "HullCity", "lcfc", "LiverpoolFC", "MCFC", "reddevils", "SaintsFC", 
 		       "StokeCityFC", "safc", "coys", "Watford_FC", "WBAfootball", "Hammers", 
 		       "swanseacity", "Burnley")
-subredditmatrix(premierleagueclubs)
+plmatrix <- subredditmatrix(premierleagueclubs)
 
 ## matrix of similarities between nfl teams (St Louis Rams moved to LA)
 nflteams <- c("buffalobills", "ravens", "Colts", "DenverBroncos", "miamidolphins", "bengals", 
@@ -94,7 +95,7 @@ nflteams <- c("buffalobills", "ravens", "Colts", "DenverBroncos", "miamidolphins
 		   "AZCardinals", "NYGiants", "detroitlions", "panthers", "49ers", "eagles", 
 		   "GreenBayPackers", "Saints", "Seahawks", "Redskins", "minnesotavikings", "buccaneers", 
 		   "StLouisRams", "LosAngelesRams")
-subredditmatrix(nflteams)
+nflmatrix <- subredditmatrix(nflteams)
 
 ## matrix of similarities between nba teams
 nbateams <- c("bostonceltics", "chicagobulls", "AtlantaHawks", "GoNets", "clevelandcavs", "CharlotteHornets", 
@@ -102,7 +103,7 @@ nbateams <- c("bostonceltics", "chicagobulls", "AtlantaHawks", "GoNets", "clevel
 	      "MkeBucks", "washingtonwizards", "denvernuggets", "warriors", "Mavericks", "timberwolves", 
 	      "LAClippers", "rockets", "Thunder", "lakers", "memphisgrizzlies", "ripcity", "suns", "NOLAPelicans", 
 	      "UtahJazz", "kings", "NBASpurs")
-subredditmatrix(nbateams)
+nbamatrix <- subredditmatrix(nbateams)
 
 ## matrix of similarities between mlb teams
 mlbteams <- c("angelsbaseball", "whitesox", "orioles", "Astros", "WahoosTipi", "redsox", "OaklandAthletics", 
@@ -110,97 +111,34 @@ mlbteams <- c("angelsbaseball", "whitesox", "orioles", "Astros", "WahoosTipi", "
 	      "minnesotatwins", "Torontobluejays", "azdiamondbacks", "Cubs", "Braves", "ColoradoRockies", 
 	      "Reds", "letsgofish", "Dodgers", "Brewers", "NewYorkMets", "Padres", "buccos", "phillies", 
 	      "SFGiants", "Cardinals", "Nationals")
-subredditmatrix(mlbteams)
+mlbmatrix <- subredditmatrix(mlbteams)
 
+## create and export plots
+createplot <- function(matrix) {
+	filename <- paste(deparse(substitute(matrix)),".png",sep="")
+	matrix <- melt(matrix)
+	
+	p <- ggplot(matrix, aes(Var2, Var1)) + 
+    	geom_tile(aes(fill = value), colour ="white") + 
+    	scale_fill_gradient(low ="white", high ="black")
 
-# /r/The_Donald
-cursubs = c("the_donald")
-curops = c("+")
-findrelsubreddit(cursubs,curops,5)
+	base_size <- 9
 
-# /r/The_Donald - /r/politics
-cursubs = c("the_donald","politics")
-curops = c("+","-")
-findrelsubreddit(cursubs,curops,5)
+	p <- p + theme_grey(base_size = base_size) + 
+    	labs(x ="",y ="Subreddit Name") + scale_x_discrete(expand=c(0, 0)) +
+    	scale_y_discrete(expand = c(0, 0)) +
+	theme(legend.position = "none",
+	      axis.ticks = element_blank(), 
+	      axis.text.x = element_text(angle=315,hjust=0),
+	      plot.margin = unit(c(1,1,1,1),"cm"))
 
-# /r/hillaryclinton - /r/politics
-cursubs = c("hillaryclinton","politics")
-curops = c("+","-")
-findrelsubreddit(cursubs,curops,5)
+	ggsave(filename=filename, plot=p)
+}
 
-# /r/The_Donald - /r/SandersforPresident
-cursubs = c("the_donald","sandersforpresident")
-curops = c("+","-")
-findrelsubreddit(cursubs,curops,5)
+createplot(nflmatrix)
+createplot(nbamatrix)
+createplot(mlbmatrix)
+createplot(plmatrix)
 
-# /r/SandersforPresident - /r/The_Donald
-cursubs = c("sandersforpresident","the_donald")
-curops = c("+","-")
-findrelsubreddit(cursubs,curops,5)
+nflmatrix <- melt(nflmatrix)
 
-# /r/fatpeoplehate + /r/CoonTown + /r/politics
-cursubs = c("fatpeoplehate","coontown","politics")
-curops = c("+","+","+")
-findrelsubreddit(cursubs,curops,5)
-
-## Validation examples
-
-# /r/nba + /r/minnesota
-cursubs = c("nba","minnesota")
-curops = c("+","+")
-findrelsubreddit(cursubs,curops,5)
-
-# /r/personalfinance - /r/Frugal
-cursubs = c("personalfinance","frugal")
-curops = c("+","-")
-findrelsubreddit(cursubs,curops,5)
-
-# /r/Fitness + /r/TwoXChromosomes
-cursubs = c("fitness","twoxchromosomes")
-curops = c("+","+")
-findrelsubreddit(cursubs,curops,5)
-
-## Creating the ternary plot
-
-# Similatrity to /r/The_Donald
-cursubs = c("the_donald")
-curops = c("+")
-Dsubsims = findrelsubreddit(cursubs,curops,nrow(cursubmat))
-# Similarity to /r/SandersforPresident
-cursubs = c("sandersforpresident")
-curops = c("+")
-Ssubsims = findrelsubreddit(cursubs,curops,nrow(cursubmat))
-# Similarity to /r/hillaryclinton
-cursubs = c("hillaryclinton")
-curops = c("+")
-Hsubsims = findrelsubreddit(cursubs,curops,nrow(cursubmat))
-# List of subreddits we're interested in
-ternarysubs = c("theredpill","coontown","fatpeoplehate","politics","worldnews","news","sjwhate","thebluepill","feminism","books","political_revolution","basicincome")
-Dternarysubsims = Dsubsims[tolower(names(Dsubsims))%in%ternarysubs]
-Sternarysubsims = Ssubsims[tolower(names(Ssubsims))%in%ternarysubs]
-Hternarysubsims = Hsubsims[tolower(names(Hsubsims))%in%ternarysubs]
-# Normalizing the matrix
-allternarysubsims = transform(merge(transform(merge(Sternarysubsims,Dternarysubsims,by="row.names"),row.names=Row.names,Row.names=NULL),Hternarysubsims,by="row.names"),row.names=Row.names,Row.names=NULL)
-colnames(allternarysubsims) = c("S","D","H")
-allternarysubsimssums = apply(allternarysubsims,1,sum)
-allternarysubsimsnorm = sweep(allternarysubsims,1,allternarysubsimssums,"/")
-# Creating the plot
-pdf("./ternaryplotanno.pdf",height=10,width=10)
-ggtern(data=allternarysubsimsnorm,aes(S,D,H)) + geom_point() + geom_text(label=rownames(allternarysubsimsnorm),hjust=0,vjust=0)
-dev.off()
-pdf("./ternaryplot.pdf",height=10,width=10)
-ggtern(data=allternarysubsimsnorm,aes(S,D,H)) + geom_point() + theme_classic()
-dev.off()
-
-# Find subreddits that are particularly biased towards any of the three main candidate subreddits
-allsubsims = transform(merge(transform(merge(Ssubsims,Dsubsims,by="row.names"),row.names=Row.names,Row.names=NULL),Hsubsims,by="row.names"),row.names=Row.names,Row.names=NULL)
-colnames(allsubsims) = c("S","D","H")
-chooseunique = c("H") # Set candidate subreddit of interest
-curunique = 1/(allsubsims[,(!(colnames(allsubsims)==chooseunique))]/allsubsims[,chooseunique]) # Calculate fold enrichment of target candidate subreddit over other candidate subreddits for all other subreddits
-allsubsimsmin = apply(allsubsims,1,min)
-curuniquemin = apply(curunique,1,min)
-curuniqueminc = curuniquemin[-which(allsubsimsmin==0)]
-curuniquemat = data.frame(enrich=curuniqueminc,allsubsims[match(names(curuniqueminc),rownames(allsubsims)),])
-curuniquemato = curuniquemat[order(curuniquemat$enrich,decreasing=TRUE),]
-curuniquematoc = curuniquemato[which(curuniquemato[,chooseunique]>=0.25),] # Threshold for high enrichment and high raw similarity
-head(curuniquematoc,20)

@@ -100,3 +100,19 @@ JOIN (SELECT subreddit, author, COUNT(1) as cnt
 ON t1.author=t2.author
 WHERE t1.subreddit!=t2.subreddit
 GROUP BY t1.subreddit, t2.subreddit
+
+# Look at overlap between particular subreddits
+SELECT t1.subreddit, t2.subreddit, SUM(1) as NumOverlaps
+FROM (SELECT subreddit, author, COUNT(1) as cnt 
+     FROM [fh-bigquery:reddit_comments.all_starting_201501]
+     WHERE author NOT IN (SELECT author FROM [fh-bigquery:reddit_comments.bots_201505])
+     AND subreddit IN ('LiverpoolFC', 'reddevils')
+     GROUP BY subreddit, author HAVING cnt > 10) t1
+JOIN (SELECT subreddit, author, COUNT(1) as cnt 
+     FROM [fh-bigquery:reddit_comments.all_starting_201501]
+     WHERE author NOT IN (SELECT author FROM [fh-bigquery:reddit_comments.bots_201505])
+     AND subreddit IN ('LiverpoolFC', 'reddevils')
+     GROUP BY subreddit, author HAVING cnt > 10) t2
+ON t1.author=t2.author
+WHERE t1.subreddit!=t2.subreddit
+GROUP BY t1.subreddit, t2.subreddit

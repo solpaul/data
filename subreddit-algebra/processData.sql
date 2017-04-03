@@ -9,7 +9,7 @@ FROM (SELECT subreddit, SUM(1) AS authors, SUM(cnt) AS comments, SUM(sum_score) 
          WHERE subreddit IN('AFL', 'CFL', 'nfl', 'soccer', 'MLS', 'rugbyunion', 
          'nrl', 'mlb', 'nhl', 'nba', 'ProGolf', 'tennis', 'Cricket', 'olympics', 'GAA',
          'CFB', 'CollegeBasketball', 'Boxing', 'formula1', 'MMA', 'ufc', 'NASCAR',
-         'LaLiga', 'PremierLeague')
+         'LaLiga', 'PremierLeague', 'baseball')
          GROUP BY subreddit, author 
          HAVING cnt > 0)
      GROUP BY subreddit) t

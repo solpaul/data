@@ -75,16 +75,30 @@ return(subsimilarity)
 ## function to calculate similarity matrix for set of subreddits
 subredditmatrix <- function(cursubs) {
 	cursubs = sort(tolower(cursubs))
-	similaritymatrix = matrix(0, ncol=length(cursubs), nrow=length(cursubs))
+	size = length(cursubs)
+	similaritymatrix = matrix(0, ncol=size+2, nrow=size)
 	for(i in 1:length(cursubs)) {
 		for(j in 1:length(cursubs)) {
 			similaritymatrix[i,j] = subredditsimilarity(cursubs[i], cursubs[j])
 		}
 	}
+	# Add averages
+	similaritymatrix[,size+2] = rowMeans(similaritymatrix[,1:size])
+	# Add minimum for empty column, will be white on plot and allows
+	# shades to be over the biggest possible range
+	similaritymatrix[,size+1] = min(similaritymatrix[,1:size])
+	
 	rownames(similaritymatrix) = cursubs
-	colnames(similaritymatrix) = cursubs
+	colnames(similaritymatrix) = c(cursubs,"","Average")
 return(similaritymatrix)
 }
+
+## matrix of similarities between sports
+sports <- c("AFL", "CFL", "nfl", "soccer", "MLS", "rugbyunion", 
+	    "nrl", "mlb", "nhl", "nba", "ProGolf", "tennis", "Cricket", "olympics", "GAA",
+	    "CFB", "CollegeBasketball", "Boxing", "formula1", "MMA", "ufc", "NASCAR",
+	    "LaLiga", "PremierLeague", "baseball")
+sportsmatrix <- subredditmatrix(sports)
 
 ## matrix of similarities between premier league clubs (Middlesbrough did not have enough comments)
 premierleagueclubs <- c("Gunners", "AFCBournemouth", "chelseafc", "crystalpalace", "Everton", 
@@ -117,6 +131,13 @@ mlbteams <- c("angelsbaseball", "whitesox", "orioles", "Astros", "WahoosTipi", "
 	      "Reds", "letsgofish", "Dodgers", "Brewers", "NewYorkMets", "Padres", "buccos", "phillies", 
 	      "SFGiants", "Cardinals", "Nationals")
 mlbmatrix <- subredditmatrix(mlbteams)
+
+## average similarities for all matrices
+mean(sportsmatrix[,"Average"])
+mean(plmatrix[,"Average"])
+mean(nflmatrix[,"Average"])
+mean(nbamatrix[,"Average"])
+mean(mlbmatrix[,"Average"])
 
 ## create and export plots
 createplot <- function(matrix) {

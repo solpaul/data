@@ -6,7 +6,7 @@
 # Also implements "subreddit algebra"
 # by adding and subtracting subreddit
 # vectors. 
-# By @martintrevor_ for FiveThirtyEight
+# Originally By @martintrevor_ for FiveThirtyEight
 #
 # Added code to create matrix of similarities
 # across a set of subreddits, plot as a
@@ -23,6 +23,7 @@ library(ggplot2)
 ##### Part 1: Load in the data
 
 # This CSV file was created by running the SQL code in processData.sql in Google's BigQuery
+# to produce list of number of users who authored at least 10 posts in pairs of subreddits
 rawsubredditvecs = read.table("all_starting_2015_01_overlaps_top2200_no200_10com_allrank_mod_122716.csv",header=TRUE,sep=",")
 
 ##### Part 2: Format and clean data for analysis

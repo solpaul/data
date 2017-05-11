@@ -1,6 +1,7 @@
 ##### Part 0: Formatted and processed data in BigQuery
 ## Thanks to Reddit users /u/Stuck_In_the_Matrix for pulling the data originally and /u/fhoffa for hosting the data on BigQery
 
+#### Queries to create summary statistics for selected sets of subreddits
 ## Creating list of number of comments, authors and average scores for sports property related subreddits
 SELECT subreddit, authors, comments, average_score, comments / authors AS comments_per_author
 FROM (SELECT subreddit, SUM(1) AS authors, SUM(cnt) AS comments, SUM(sum_score) / SUM(cnt) AS average_score
@@ -75,7 +76,9 @@ FROM (SELECT subreddit, SUM(1) AS authors, SUM(cnt) AS comments, SUM(sum_score) 
      GROUP BY subreddit) t
 ORDER BY authors DESC;
 
-## Creating list of number of users in each subreddit: 
+#### Queries to create tables for subsequent use in R
+## Creating list of number of users in each subreddit, save this as "subr_rank_all_starting_201501" for
+## use in next query. Note that this includes data up to latest month available in BigQuery:
 SELECT subreddit, authors, DENSE_RANK() OVER (ORDER BY authors DESC) AS rank_authors
 FROM (SELECT subreddit, SUM(1) as authors
      FROM (SELECT subreddit, author, COUNT(1) as cnt 
@@ -85,7 +88,7 @@ FROM (SELECT subreddit, SUM(1) as authors
      GROUP BY subreddit) t
 ORDER BY authors DESC;
 
-# Creating list of number of users who authored at least 10 posts in pairs of subreddits: 
+## Creating list of number of users who authored at least 10 posts in pairs of subreddits: 
 SELECT t1.subreddit, t2.subreddit, SUM(1) as NumOverlaps
 FROM (SELECT subreddit, author, COUNT(1) as cnt 
      FROM [fh-bigquery:reddit_comments.all_starting_201501]
@@ -101,7 +104,8 @@ ON t1.author=t2.author
 WHERE t1.subreddit!=t2.subreddit
 GROUP BY t1.subreddit, t2.subreddit
 
-# Look at overlap between particular subreddits
+
+#### Final query to calculate overlap between particular subreddits
 SELECT t1.subreddit, t2.subreddit, SUM(1) as NumOverlaps
 FROM (SELECT subreddit, author, COUNT(1) as cnt 
      FROM [fh-bigquery:reddit_comments.all_starting_201501]
